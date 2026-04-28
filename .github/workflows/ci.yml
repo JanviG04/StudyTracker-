@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-syntax:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+          pip install -r requirements.txt
+
+      - name: Syntax check (py_compile)
+        run: |
+          python -m py_compile main.py tracker_utils.py db_config.py
+          python -m py_compile ml/sentiment.py ml/focus_classifier.py ml/train.py
+
+      - name: Lint with ruff
+        run: |
+          ruff check . --select E,F,W --ignore E501,E402
+
+      - name: Smoke-test ML imports (no DB)
+        run: |
+          python -c "from ml.sentiment import score_text; assert score_text('great session') > 0"
+          python -c "from ml.focus_classifier import build_features, MOOD_VALUES; assert 'Focused' in MOOD_VALUES"
