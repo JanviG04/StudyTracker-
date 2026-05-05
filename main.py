@@ -1670,7 +1670,7 @@ class StudyApp:
         top_pad = 16
         row_gap = 38
         row_height = 26
-        right_pad = 120
+        right_pad = 110
         max_hours = max(float(row["total_hours"] or 0) for row in usable_rows)
         max_hours = max(max_hours, 1.0)
         total_hours = sum(float(row["total_hours"] or 0) for row in usable_rows)
@@ -1716,23 +1716,12 @@ class StudyApp:
                 tags=(tag,),
             )
             canvas.create_text(
-                width - 18,
+                width - 14,
                 y0 + row_height / 2,
                 text=f"{hours:.2f} h  |  {percent:.0f}%",
                 anchor="e",
                 fill=THEME["navy"] if is_active else THEME["slate"],
-                font=("Segoe UI", 10),
-                tags=(tag,),
-            )
-
-            badge_text = "Leader" if index == 0 else f"#{index + 1}"
-            canvas.create_text(
-                left_pad + bar_space + 14,
-                y0 + row_height / 2,
-                text=badge_text,
-                anchor="w",
-                fill=THEME["accent_dark"] if index == 0 else THEME["slate"],
-                font=("Segoe UI Semibold", 9),
+                font=("Segoe UI Semibold", 10),
                 tags=(tag,),
             )
 
@@ -1741,6 +1730,8 @@ class StudyApp:
 
     def on_top_subject_hover(self, index):
         if not self.top_subject_rows or index >= len(self.top_subject_rows):
+            return
+        if self.top_subject_hover_index == index:
             return
         self.draw_top_subjects_chart(self.top_subject_rows, active_index=index)
         row = self.top_subject_rows[index]
