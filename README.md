@@ -10,6 +10,24 @@
 
 ---
 
+## Demo
+
+**Main dashboard** — session entry, stat cards, top-subjects bar chart, wellness coach with the live **AI Insights** line at the bottom:
+
+![Dashboard](docs/dashboard.png)
+
+**Analytics tab** — custom-rendered 7-day study trend with a rolling-average overlay, plus a horizontal subject-mix chart:
+
+![Analytics](docs/analytics.png)
+
+**Engagement layer** — streak celebration on first session of the day, and the daily-goal completion popup. The screenshot on the right captures the wellness coach simultaneously surfacing a "Burnout warning" and the AI Insights sentiment summary — everything stays in sync:
+
+| Streak unlock | Daily goal complete + burnout signal |
+|---|---|
+| ![Streak](docs/streak-celebration.png) | ![Goal](docs/goal-complete.png) |
+
+---
+
 ## Why this project exists
 
 Most study trackers count hours. This one tries to answer *why some sessions land and others don't* — by joining structured fields (mood, hours, subject, date) with unstructured notes, scoring those notes with VADER, and training a small classifier that flags upcoming sessions as **low-focus risk** before they happen.
