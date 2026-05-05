@@ -69,3 +69,6 @@ htmlcov/
 
 # Private resume notes — keep on disk, never push
 docs/RESUME_BULLET.md
+
+# Notebook-generated artifacts (already embedded inside the .ipynb)
+docs/daily_hours.png
