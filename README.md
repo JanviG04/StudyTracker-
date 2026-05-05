@@ -24,22 +24,6 @@ It is built end-to-end:
 | **Analysis** | `pandas`, `seaborn`, `matplotlib`, `scipy.stats`, Jupyter |
 | **Ops** | `python-dotenv` for secrets, `joblib` for model persistence, GitHub Actions for CI |
 
-## Demo
-
-> Add a `docs/demo.gif` and reference it here:
->
-> ```markdown
-> ![Demo](docs/demo.gif)
-> ```
-
-| Dashboard | Analytics |
-|---|---|
-| ![Dashboard placeholder](docs/dashboard.png) | ![Analytics placeholder](docs/analytics.png) |
-
-(Capture screenshots into `docs/` after running the app.)
-
----
-
 ## What the AI layer does
 
 ### 1. Sentiment analysis on notes (`ml/sentiment.py`)
@@ -194,7 +178,7 @@ smart-study-tracker/
 ├── models/                       # Persisted joblib models (gitignored content)
 ├── notebooks/
 │   └── analysis.ipynb            # pandas/seaborn EDA
-├── docs/                         # Screenshots, demo gif (add your own)
+├── docs/                         # Screenshots and demo assets
 ├── .github/workflows/ci.yml      # Lint + syntax check on push/PR
 ├── requirements.txt
 ├── .env.example
