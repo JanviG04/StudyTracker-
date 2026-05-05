@@ -498,6 +498,7 @@ class StudyApp:
         self.hero_default_text = "Track attention, avoid burnout, and build consistency."
         self.date_var = tk.StringVar(value="")
         self.analytics_scroll_canvas = None
+        self.dashboard_scroll_canvas = None
         self._cached_top_subjects = []
         self._cached_progress = []
         self._cached_subject_breakdown = []
@@ -770,10 +771,35 @@ class StudyApp:
         left = self.create_card(body, bg=THEME["card_alt"], padx=20, pady=20)
         left.grid(row=0, column=0, sticky="nsew")
 
-        center = tk.Frame(body, bg=THEME["bg"])
-        center.grid(row=0, column=1, sticky="nsew", padx=14)
+        center_wrap = tk.Frame(body, bg=THEME["bg"])
+        center_wrap.grid(row=0, column=1, sticky="nsew", padx=14)
+
+        center_canvas = tk.Canvas(
+            center_wrap,
+            bg=THEME["bg"],
+            highlightthickness=0,
+            bd=0,
+        )
+        center_scroll = ttk.Scrollbar(center_wrap, orient="vertical", command=center_canvas.yview)
+        center_canvas.configure(yscrollcommand=center_scroll.set)
+        center_scroll.pack(side="right", fill="y")
+        center_canvas.pack(side="left", fill="both", expand=True)
+        self.dashboard_scroll_canvas = center_canvas
+
+        center = tk.Frame(center_canvas, bg=THEME["bg"])
+        center_window = center_canvas.create_window((0, 0), window=center, anchor="nw")
         center.columnconfigure(0, weight=1)
-        center.rowconfigure(2, weight=1)
+
+        center.bind(
+            "<Configure>",
+            lambda _e: center_canvas.configure(scrollregion=center_canvas.bbox("all")),
+        )
+        center_canvas.bind(
+            "<Configure>",
+            lambda event: center_canvas.itemconfigure(center_window, width=event.width),
+        )
+        self.register_dashboard_scroll_target(center_canvas)
+        self.register_dashboard_scroll_target(center)
 
         side = tk.Frame(body, bg=THEME["bg"])
         side.grid(row=0, column=2, sticky="nsew")
@@ -1147,7 +1173,7 @@ class StudyApp:
 
     def build_history_panel(self, parent):
         history_frame = self.create_card(parent, bg=THEME["card"], padx=20, pady=16)
-        history_frame.grid(row=2, column=0, sticky="nsew", pady=(14, 0))
+        history_frame.grid(row=2, column=0, sticky="ew", pady=(14, 0))
 
         inner = tk.Frame(history_frame, bg=THEME["card"])
         inner.pack(fill="both", expand=True)
@@ -1161,7 +1187,7 @@ class StudyApp:
         ).pack(anchor="w", pady=(0, 10))
 
         columns = ("date", "subject", "hours", "mood", "notes")
-        self.session_table = ttk.Treeview(inner, columns=columns, show="headings", height=6, style="App.Treeview")
+        self.session_table = ttk.Treeview(inner, columns=columns, show="headings", height=8, style="App.Treeview")
         self.session_table.heading("date", text="Date")
         self.session_table.heading("subject", text="Subject")
         self.session_table.heading("hours", text="Hours")
@@ -1428,6 +1454,47 @@ class StudyApp:
     def _update_timer_label(self):
         minutes, seconds = divmod(max(self.remaining_seconds, 0), 60)
         self.timer_label_var.set(f"{minutes:02d}:{seconds:02d}")
+
+    def register_dashboard_scroll_target(self, widget):
+        widget.bind("<Enter>", self.bind_dashboard_mousewheel, add="+")
+        widget.bind("<Leave>", self.unbind_dashboard_mousewheel, add="+")
+
+    def bind_dashboard_mousewheel(self, _event=None):
+        if self.dashboard_scroll_canvas is None:
+            return
+        self.root.bind_all("<MouseWheel>", self.on_dashboard_mousewheel)
+        self.root.bind_all("<Button-4>", self.on_dashboard_mousewheel)
+        self.root.bind_all("<Button-5>", self.on_dashboard_mousewheel)
+
+    def widget_is_in_dashboard(self, widget):
+        while widget is not None:
+            if widget == self.dashboard_scroll_canvas:
+                return True
+            widget = getattr(widget, "master", None)
+        return False
+
+    def unbind_dashboard_mousewheel(self, _event=None):
+        current_widget = self.root.winfo_containing(self.root.winfo_pointerx(), self.root.winfo_pointery())
+        if current_widget is not None and self.widget_is_in_dashboard(current_widget):
+            return
+        self.root.unbind_all("<MouseWheel>")
+        self.root.unbind_all("<Button-4>")
+        self.root.unbind_all("<Button-5>")
+
+    def on_dashboard_mousewheel(self, event):
+        if self.dashboard_scroll_canvas is None:
+            return
+
+        if getattr(event, "delta", 0):
+            scroll_units = -int(event.delta / 120)
+            if scroll_units == 0:
+                scroll_units = -1 if event.delta > 0 else 1
+        elif getattr(event, "num", None) == 4:
+            scroll_units = -1
+        else:
+            scroll_units = 1
+
+        self.dashboard_scroll_canvas.yview_scroll(scroll_units, "units")
 
     def register_analytics_scroll_target(self, widget):
         widget.bind("<Enter>", self.bind_analytics_mousewheel, add="+")
