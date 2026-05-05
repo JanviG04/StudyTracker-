@@ -66,3 +66,6 @@ htmlcov/
 # Local DB dumps
 *.sql.bak
 *.dump
+
+# Private resume notes — keep on disk, never push
+docs/RESUME_BULLET.md
