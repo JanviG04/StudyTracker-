@@ -1,0 +1,21 @@
+# Normalize line endings — checkout LF or CRLF appropriately per platform.
+* text=auto
+
+# --- GitHub linguist overrides (controls the repo's language bar) ---
+# The EDA notebook is checked in with executed cell outputs, including
+# base64-encoded chart PNGs. Without this override, GitHub linguist counts
+# those base64 lines toward the language total and reports the repo as
+# ~65% Jupyter Notebook, even though the real application code is Python.
+# Reclassifying notebooks/ as documentation surfaces Python as the
+# primary language while keeping the notebook fully renderable on GitHub.
+notebooks/**         linguist-documentation
+*.ipynb              linguist-documentation
+
+# Treat trained model files and screenshots as binary (no text diffs).
+models/*.joblib      binary
+docs/*.png           binary
+docs/*.gif           binary
+docs/*.jpg           binary
+
+# Treat the database schema as SQL for syntax highlighting on GitHub.
+*.sql                linguist-language=SQL

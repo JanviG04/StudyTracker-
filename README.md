@@ -2,6 +2,7 @@
 
 > A Python desktop application that combines a Tkinter dashboard, a MySQL data layer, and a small ML stack (VADER sentiment + scikit-learn logistic regression) to turn raw study sessions into actionable, AI-driven coaching.
 
+[![CI](https://github.com/JanviG04/StudyTracker-/actions/workflows/ci.yml/badge.svg)](https://github.com/JanviG04/StudyTracker-/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-4479A1?logo=mysql&logoColor=white)
 ![scikit--learn](https://img.shields.io/badge/scikit--learn-1.3%2B-F7931E?logo=scikit-learn&logoColor=white)
